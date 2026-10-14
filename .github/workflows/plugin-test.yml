@@ -6,6 +6,7 @@ on:
       version: {description: "plugin version (blank = latest)", required: false, default: ""}
       apply_fix: {description: "apply fixes/<slug>.py before testing", required: false, default: "false"}
       wp: {description: "WordPress version", required: false, default: "latest"}
+      deps: {description: "extra wordpress.org plugins to install and activate first, space separated (e.g. woocommerce)", required: false, default: ""}
 run-name: "${{ inputs.slug }} ${{ inputs.version }} fix=${{ inputs.apply_fix }} wp=${{ inputs.wp }}"
 jobs:
   test:
@@ -34,6 +35,7 @@ jobs:
       - name: Install plugin
         working-directory: site
         run: |
+          D="${{ inputs.deps }}"; if [ -n "$D" ]; then wp plugin install $D --activate; fi
           V="${{ inputs.version }}"; if [ -n "$V" ]; then wp plugin install "${{ inputs.slug }}" --version="$V"; else wp plugin install "${{ inputs.slug }}"; fi
           wp plugin list --name="${{ inputs.slug }}"
       - name: Apply fix
