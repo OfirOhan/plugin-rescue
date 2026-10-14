@@ -53,6 +53,7 @@ jobs:
           php -S 127.0.0.1:8080 >/dev/null 2>&1 &
           sleep 2
           curl -s -o /dev/null -w "front %{http_code}\n" http://127.0.0.1:8080/
+          wp transient delete _wc_activation_redirect >/dev/null 2>&1 || true  # WooCommerce (when a dep) redirects to its setup wizard on admin_init
           wp eval 'wp_set_current_user(1); set_current_screen("dashboard"); do_action("admin_init"); do_action("admin_menu"); do_action("admin_notices"); echo "admin hooks ok\n";'
       - name: Targeted reproduction
         working-directory: site
